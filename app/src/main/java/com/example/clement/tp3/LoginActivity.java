@@ -106,7 +106,7 @@ public class LoginActivity extends ActionBarActivity {
                     VolleyLog.d(TAG, "Error: " + error.getMessage());
                     hidePDialog();
 
-                    // Dirty : Best way to do would be to create An networkResponse class (+subClasses) and deserialize json to this class using the Gson lib
+                    // Dirty : Best way to do would be to create a networkResponse class (+subClasses) and deserialize json to this class using the Gson lib
                     // and a custom adapter
                     if (error.networkResponse.statusCode == 401) {
                         String json = new String(error.networkResponse.data);
