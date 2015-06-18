@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="fab_normal" type="color">#F44336</item>
+    <item name="fab_pressed" type="color">#E53935</item>
+</resources>

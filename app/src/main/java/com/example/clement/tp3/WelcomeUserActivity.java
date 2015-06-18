@@ -1,18 +1,37 @@
 package com.example.clement.tp3;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.example.clement.tp3.app.AppController;
+import com.melnykov.fab.FloatingActionButton;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public class WelcomeUserActivity extends ActionBarActivity {
+
+    private static final String url = "http://questioncode.fr:10007/api/groups";
+    private ProgressDialog pDialog;
+    private static final String TAG = CreateAccountActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,9 +39,36 @@ public class WelcomeUserActivity extends ActionBarActivity {
         setContentView(R.layout.activity_welcome_user);
 
         String name = AppController.getLoggedUserName();
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(getString(R.string.groupsOf) + " " + name);
 
-        TextView welcomeUserView = (TextView)findViewById(R.id.welcome_user);
-        welcomeUserView.setText(getString(R.string.welcome)+" "+name);
+        ListView listView = (ListView) findViewById(android.R.id.list);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.attachToListView(listView);
+
+        pDialog = new ProgressDialog(this);
+        final Context context = this;
+        AppController.getJsonArray(url, new Response.Listener<JSONArray>() {
+
+            @Override
+            public void onResponse(JSONArray response) {
+                Log.d(TAG, "response : " + response);
+                Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT);
+                pDialog.hide();
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                System.out.println("GET JSON EPIC FAIL =>" + error.toString());
+                /* if (error.networkResponse.statusCode == 503) {
+                    Toast.makeText(context, getString(R.string.serverOffline), Toast.LENGTH_SHORT).show();
+                }*/
+
+                hidePDialog();
+            }
+        });
 
     }
 
@@ -56,5 +102,25 @@ public class WelcomeUserActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void hidePDialog() {
+        if (pDialog != null) {
+            pDialog.dismiss();
+            pDialog = null;
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        hidePDialog();
+    }
+
+    public void createGroup(View v) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setView(R.layout.dialog_add_group);
+        alertDialogBuilder.create().show();
+
     }
 }

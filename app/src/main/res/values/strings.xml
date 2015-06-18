@@ -29,5 +29,8 @@
     <string name="serverOffline">Le serveur n\'est pas accessible, merci de réessayer plus tard.</string>
     <string name="deviceOffline">Aucun connexion à internet active. Merci de vérifier vos paramètres de connexion</string>
     <string name="invalidMail">Adresse mail invalide</string>
+    <string name="groupsOf">Groupes de :</string>
+    <string name="groupName">Nom du groupe</string>
+    <string name="groupUsersEmails">Email des utilisateurs du groupe :</string>
 
 </resources>
