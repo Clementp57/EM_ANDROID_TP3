@@ -91,8 +91,6 @@ public class CreateAccountActivity extends ActionBarActivity {
                 public void onResponse(JSONObject response) {
                     try {
                         String token = response.getString("token");
-                        Log.d(TAG, "TOKEN : " + token);
-
                         AppController.registerAndLogUser(token, name, mail);
 
                         Intent intent = new Intent(context, WelcomeUserActivity.class);

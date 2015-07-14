@@ -38,9 +38,13 @@ public class WelcomeUserActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome_user);
 
-        String name = AppController.getLoggedUserName();
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle(getString(R.string.groupsOf) + " " + name);
+        AppController.getLoggedUserName(new AppController.AsyncCallback() {
+            @Override
+            public void onSuccess(String name) {
+                ActionBar actionBar = getSupportActionBar();
+                actionBar.setTitle(getString(R.string.groupsOf) + " " + name);
+            }
+        });
 
         ListView listView = (ListView) findViewById(android.R.id.list);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
