@@ -93,7 +93,7 @@ public class CreateAccountActivity extends ActionBarActivity {
                         String token = response.getString("token");
                         AppController.registerAndLogUser(token, name, mail);
 
-                        Intent intent = new Intent(context, WelcomeUserActivity.class);
+                        Intent intent = new Intent(context, GroupActivity.class);
                         startActivity(intent);
                     } catch (JSONException exception) {
                         Log.d(TAG, exception.toString());

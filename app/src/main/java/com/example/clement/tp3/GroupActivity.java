@@ -3,6 +3,7 @@ package com.example.clement.tp3;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBar;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,24 +21,41 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.VolleyLog;
+import com.example.clement.tp3.adapter.GroupViewAdapter;
 import com.example.clement.tp3.app.AppController;
+import com.example.clement.tp3.model.Group;
+import com.google.gson.Gson;
 import com.melnykov.fab.FloatingActionButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-public class WelcomeUserActivity extends ActionBarActivity {
+
+public class GroupActivity extends ActionBarActivity {
 
     private static final String url = "http://questioncode.fr:10007/api/groups";
     private ProgressDialog pDialog;
     private static final String TAG = CreateAccountActivity.class.getSimpleName();
+    private List<Group> groups = new ArrayList<Group>();
+    private ListView listView;
+    private GroupViewAdapter adapter;
+    private AlertDialog createGroupDialog = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome_user);
+
+        listView = (ListView) findViewById(R.id.groupList);
+        adapter = new GroupViewAdapter(this, groups);
+        listView.setAdapter(adapter);
 
         AppController.getLoggedUserName(new AppController.AsyncCallback() {
             @Override
@@ -46,7 +65,6 @@ public class WelcomeUserActivity extends ActionBarActivity {
             }
         });
 
-        ListView listView = (ListView) findViewById(android.R.id.list);
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.attachToListView(listView);
 
@@ -58,6 +76,28 @@ public class WelcomeUserActivity extends ActionBarActivity {
             public void onResponse(JSONArray response) {
                 Log.d(TAG, "response : " + response);
                 Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT);
+
+                for(int i = 0; i< response.length(); i++) {
+                    try {
+                        List<String> userEmails = new ArrayList<String>();
+                        JSONObject obj = response.getJSONObject(i);
+                        String name = obj.getString("name");
+                        Group group = new Group(name);
+
+                        JSONArray emails = obj.getJSONArray("emails");
+
+                        for (int j=0; i<emails.length(); j++) {
+                            userEmails.add(emails.get(j).toString());
+                        }
+
+                        group.setUsers(userEmails);
+                        groups.add(group);
+
+                    } catch(JSONException e) {
+                        Log.d(TAG, "JSONException -> "+e.getMessage());
+                    }
+                }
+                adapter.notifyDataSetChanged();
                 pDialog.hide();
             }
         }, new Response.ErrorListener() {
@@ -122,9 +162,70 @@ public class WelcomeUserActivity extends ActionBarActivity {
     }
 
     public void createGroup(View v) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setView(R.layout.dialog_add_group);
-        alertDialogBuilder.create().show();
+        if(createGroupDialog == null) {
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder.setView(R.layout.dialog_add_group);
+            alertDialogBuilder.setPositiveButton(R.string.validate,
+                    new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            addGroup(dialog);
+                        }
+                    });
+            createGroupDialog = alertDialogBuilder.create();
+        }
 
+        createGroupDialog.show();
+
+
+    }
+
+    public void addGroup(DialogInterface dialog) {
+        EditText inputGroupName = (EditText)((AlertDialog) dialog).findViewById(R.id.inputGroupName);
+        EditText inputGroupUsers = (EditText)((AlertDialog) dialog).findViewById(R.id.inputGroupUsers);
+
+        String groupName = inputGroupName.getText().toString();
+        String groupUsers = inputGroupUsers.getText().toString();
+
+        String[] usersEmails = groupUsers.split(",");
+        List<String> emails = new ArrayList<String>();
+
+        for(String email: usersEmails) {
+            emails.add(email);
+        }
+
+        Group group = new Group(groupName);
+        group.setUsers(emails);
+
+        Map<String, String> params = new HashMap<>();
+        params = new HashMap<String, String>();
+        params.put("name", groupName);
+        params.put("emails", new Gson().toJson(emails));
+
+        AppController.postJson(url, params, new Response.Listener<JSONObject>() {
+
+            @Override
+            public void onResponse(JSONObject response) {
+                Log.d(TAG, "Group created on server");
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+
+            }
+        });
+
+        groups.add(group);
+        adapter.notifyDataSetChanged();
+        clearCreateGroupDialog(dialog);
+    }
+
+    private void clearCreateGroupDialog(DialogInterface dialog) {
+        EditText name = (EditText)((AlertDialog) dialog).findViewById(R.id.inputGroupName);
+        name.setText("");
+        EditText users = (EditText)((AlertDialog) dialog).findViewById(R.id.inputGroupUsers);
+        users.setText("");
     }
 }

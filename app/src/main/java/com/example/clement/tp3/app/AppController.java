@@ -79,7 +79,7 @@ public class AppController extends Application {
         }
     }
 
-    public static boolean postJson(String url, Map<String, String> params, Response.Listener<JSONObject> successListener, Response.ErrorListener errorListener) {
+    public static boolean postJson(String url, Map<?, ?> params, Response.Listener<JSONObject> successListener, Response.ErrorListener errorListener) {
         // Checks Network Availability
         if(isNetworkAvailable()) {
             // Create Volley request
@@ -90,6 +90,7 @@ public class AppController extends Application {
                 public Map<String, String> getHeaders() throws AuthFailureError {
                     HashMap<String, String> headers = new HashMap<String, String>();
                     headers.put("Content-Type", "application/json; charset=utf-8");
+                    headers.put("Authorization", "Bearer "+getLoggedUserToken());
                     return headers;
                 }
 

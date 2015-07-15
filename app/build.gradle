@@ -24,4 +24,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.1.1'
     compile 'com.mcxiaoke.volley:library:1.0.+@aar'
     compile 'com.melnykov:floatingactionbutton:1.3.0'
+    compile 'com.google.code.gson:gson:2.2.4'
+
 }

@@ -8,30 +8,29 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/editText"
-        android:hint="@string/groupName" />
+        android:id="@+id/inputGroupName"
+        android:hint="@string/groupName"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/groupUsersEmails"
-        android:id="@+id/textView3" />
+        android:id="@+id/textView3"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp" />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="textMultiLine"
         android:ems="10"
-        android:id="@+id/editText2"
+        android:id="@+id/inputGroupUsers"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="0.45" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/validate"
-        android:id="@+id/button3"
-        android:layout_gravity="center_horizontal" />
+        android:layout_weight="0.45"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp" />
 
 </LinearLayout>

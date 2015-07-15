@@ -31,6 +31,6 @@
     <string name="invalidMail">Adresse mail invalide</string>
     <string name="groupsOf">Groupes de :</string>
     <string name="groupName">Nom du groupe</string>
-    <string name="groupUsersEmails">Email des utilisateurs du groupe :</string>
+    <string name="groupUsersEmails">Email des utilisateurs du groupe : (séparés par des virgules)</string>
 
 </resources>

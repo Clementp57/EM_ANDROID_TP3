@@ -21,7 +21,7 @@ public class MainActivity extends ActionBarActivity {
                 getString(R.string.active_user), Context.MODE_PRIVATE);
 
         if(!sharedPref.getString(getString(R.string.email), "").isEmpty()) {
-            Intent intent = new Intent(this, WelcomeUserActivity.class);
+            Intent intent = new Intent(this, GroupActivity.class);
             startActivity(intent);
         }
     }
