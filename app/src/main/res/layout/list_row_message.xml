@@ -6,17 +6,17 @@
 
     <!-- Group Name -->
     <TextView
-        android:id="@+id/groupName"
+        android:id="@+id/author"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true" />
 
     <!-- Users -->
     <TextView
-        android:id="@+id/groupUsers"
+        android:id="@+id/messageContent"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/groupName"
+        android:layout_below="@+id/author"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 

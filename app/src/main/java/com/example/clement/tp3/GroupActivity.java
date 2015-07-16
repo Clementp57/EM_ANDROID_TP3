@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -57,6 +58,20 @@ public class GroupActivity extends ActionBarActivity {
         adapter = new GroupViewAdapter(this, groups);
         listView.setAdapter(adapter);
 
+        final Context context = this;
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, "POSITION -> "+position);
+                Group group = groups.get(position);
+                String groupId = group.getId();
+
+                Intent intent = new Intent(context, GroupChatActivity.class);
+                intent.putExtra("groupId", groupId);
+                startActivity(intent);
+            }
+        });
+
         AppController.getLoggedUserName(new AppController.AsyncCallback() {
             @Override
             public void onSuccess(String name) {
@@ -68,42 +83,44 @@ public class GroupActivity extends ActionBarActivity {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.attachToListView(listView);
 
-        pDialog = new ProgressDialog(this);
-        final Context context = this;
-        AppController.getJsonArray(url, new Response.Listener<JSONArray>() {
+        pDialog=new ProgressDialog(this);
+        AppController.getJsonArray(url,new Response.Listener<JSONArray>() {
 
             @Override
-            public void onResponse(JSONArray response) {
-                Log.d(TAG, "response : " + response);
-                Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT);
+            public void onResponse (JSONArray response){
+            Log.d(TAG, "response : " + response);
+            Toast.makeText(context, response.toString(), Toast.LENGTH_SHORT);
 
-                for(int i = 0; i< response.length(); i++) {
-                    try {
-                        List<String> userEmails = new ArrayList<String>();
-                        JSONObject obj = response.getJSONObject(i);
-                        String name = obj.getString("name");
-                        Group group = new Group(name);
+            for (int i = 0; i < response.length(); i++) {
+                try {
+                    List<String> userEmails = new ArrayList<String>();
+                    JSONObject obj = response.getJSONObject(i);
+                    String name = obj.getString("name");
+                    Group group = new Group(name);
 
-                        JSONArray emails = obj.getJSONArray("emails");
+                    JSONArray emails = obj.getJSONArray("emails");
 
-                        for (int j=0; i<emails.length(); j++) {
-                            userEmails.add(emails.get(j).toString());
-                        }
-
-                        group.setUsers(userEmails);
-                        groups.add(group);
-
-                    } catch(JSONException e) {
-                        Log.d(TAG, "JSONException -> "+e.getMessage());
+                    for (int j = 0; i < emails.length(); j++) {
+                        userEmails.add(emails.get(j).toString());
                     }
-                }
-                adapter.notifyDataSetChanged();
-                pDialog.hide();
-            }
-        }, new Response.ErrorListener() {
 
-            @Override
-            public void onErrorResponse(VolleyError error) {
+                    group.setId(obj.getString("_id"));
+
+                    group.setUsers(userEmails);
+                    groups.add(group);
+
+                } catch (JSONException e) {
+                    Log.d(TAG, "JSONException -> " + e.getMessage());
+                }
+            }
+            adapter.notifyDataSetChanged();
+            pDialog.hide();
+            }
+        },new Response.ErrorListener()
+            {
+
+                @Override
+                public void onErrorResponse (VolleyError error){
                 VolleyLog.d(TAG, "Error: " + error.getMessage());
                 System.out.println("GET JSON EPIC FAIL =>" + error.toString());
                 /* if (error.networkResponse.statusCode == 503) {
@@ -228,4 +245,5 @@ public class GroupActivity extends ActionBarActivity {
         EditText users = (EditText)((AlertDialog) dialog).findViewById(R.id.inputGroupUsers);
         users.setText("");
     }
+
 }

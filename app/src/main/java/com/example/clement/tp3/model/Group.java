@@ -10,6 +10,7 @@ public class Group {
 
     private String name;
     private ArrayList<String> users;
+    private String id;
 
     public Group(String name) {
         this.name = name;
@@ -35,4 +36,11 @@ public class Group {
         this.users = new ArrayList<String>(users);
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return this.id;
+    }
 }

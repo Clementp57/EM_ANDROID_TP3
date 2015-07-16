@@ -32,5 +32,6 @@
     <string name="groupsOf">Groupes de :</string>
     <string name="groupName">Nom du groupe</string>
     <string name="groupUsersEmails">Email des utilisateurs du groupe : (séparés par des virgules)</string>
+    <string name="title_activity_group_chat">GroupChatActivity</string>
 
 </resources>
